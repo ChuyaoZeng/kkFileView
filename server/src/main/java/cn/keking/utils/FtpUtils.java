@@ -22,17 +22,17 @@ public class FtpUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FtpUtils.class);
 
-    public static FTPClient connect(String host, int port, String username, String password, String controlEncoding) throws IOException {
+    public static FTPClient connect(FtpConnectionInfo connectionInfo) throws IOException {
         FTPClient ftpClient = new FTPClient();
-        ftpClient.connect(host, port);
-        if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
-            ftpClient.login(username, password);
+        ftpClient.connect(connectionInfo.getHost(), connectionInfo.getPort());
+        if (!StringUtils.isEmpty(connectionInfo.getUsername()) && !StringUtils.isEmpty(connectionInfo.getPassword())) {
+            ftpClient.login(connectionInfo.getUsername(), connectionInfo.getPassword());
         }
         int reply = ftpClient.getReplyCode();
         if (!FTPReply.isPositiveCompletion(reply)) {
             ftpClient.disconnect();
         }
-        ftpClient.setControlEncoding(controlEncoding);
+        ftpClient.setControlEncoding(connectionInfo.getControlEncoding());
         ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
         return ftpClient;
     }
@@ -46,7 +46,8 @@ public class FtpUtils {
         int port = (url.getPort() == -1) ? url.getDefaultPort() : url.getPort();
         String remoteFilePath = url.getPath();
         LOGGER.debug("FTP connection url:{}, username:{}, password:{}, controlEncoding:{}, localFilePath:{}", ftpUrl, username, password, controlEncoding, localFilePath);
-        FTPClient ftpClient = connect(host, port, username, password, controlEncoding);
+        FtpConnectionInfo connectionInfo = new FtpConnectionInfo(host, port, username, password, controlEncoding);
+        FTPClient ftpClient = connect(connectionInfo);
         OutputStream outputStream = Files.newOutputStream(Paths.get(localFilePath));
         ftpClient.enterLocalPassiveMode();
         boolean downloadResult = ftpClient.retrieveFile(new String(remoteFilePath.getBytes(controlEncoding), StandardCharsets.ISO_8859_1), outputStream);
@@ -55,5 +56,41 @@ public class FtpUtils {
         outputStream.close();
         ftpClient.logout();
         ftpClient.disconnect();
+    }
+}
+
+class FtpConnectionInfo {
+    private String host;
+    private int port;
+    private String username;
+    private String password;
+    private String controlEncoding;
+
+    public FtpConnectionInfo(String host, int port, String username, String password, String controlEncoding) {
+        this.host = host;
+        this.port = port;
+        this.username = username;
+        this.password = password;
+        this.controlEncoding = controlEncoding;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getControlEncoding() {
+        return controlEncoding;
     }
 }

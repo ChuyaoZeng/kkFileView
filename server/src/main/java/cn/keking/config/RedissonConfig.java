@@ -32,7 +32,7 @@ public class RedissonConfig {
     private String password = null;
     private int subscriptionsPerConnection=5;
     private String clientName=null;
-    private int subscriptionConnectionMinimumIdleSize = 1;
+    private int subConnMinIdleSize = 1;
     private int subscriptionConnectionPoolSize = 50;
     private int connectionPoolSize = 64;
     private int database = 0;
@@ -52,7 +52,7 @@ public class RedissonConfig {
                 .setDatabase(database)
                 .setDnsMonitoring(dnsMonitoring)
                 .setDnsMonitoringInterval(dnsMonitoringInterval)
-                .setSubscriptionConnectionMinimumIdleSize(subscriptionConnectionMinimumIdleSize)
+                .setSubscriptionConnectionMinimumIdleSize(subConnMinIdleSize)
                 .setSubscriptionConnectionPoolSize(subscriptionConnectionPoolSize)
                 .setSubscriptionsPerConnection(subscriptionsPerConnection)
                 .setClientName(clientName)
@@ -177,12 +177,12 @@ public class RedissonConfig {
         this.clientName = clientName;
     }
 
-    public int getSubscriptionConnectionMinimumIdleSize() {
-        return subscriptionConnectionMinimumIdleSize;
+    public int getSubConnMinIdleSize() {
+        return subConnMinIdleSize;
     }
 
-    public void setSubscriptionConnectionMinimumIdleSize(int subscriptionConnectionMinimumIdleSize) {
-        this.subscriptionConnectionMinimumIdleSize = subscriptionConnectionMinimumIdleSize;
+    public void setSubConnMinIdleSize(int subConnMinIdleSize) {
+        this.subConnMinIdleSize = subConnMinIdleSize;
     }
 
     public int getSubscriptionConnectionPoolSize() {
